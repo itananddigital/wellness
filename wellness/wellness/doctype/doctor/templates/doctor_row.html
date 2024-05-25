@@ -1,0 +1,33 @@
+
+<div class="container mt-5 ">
+  <div class="column">
+    <div class="col-md-12 mb-4">
+		<div class="card h-100">
+		  <div class="row no-gutters">
+			<div class="col-md-4">
+			  <img src="{{ doc.profile }}" class="card-img" alt="Profile Picture">
+			</div>
+			<div class="col-md-8">
+			  <div class="card-body">
+				<h5 class="card-title"> <strong>Full Name:</strong>  {{ doc.first_name }} {{doc.last_name}}</h5>
+				<p class="card-text"><strong>Specialization:</strong> {{ doc.specialization }}</p>
+				<p class="card-text"><strong>City:</strong> {{ doc.city }}</p>
+				<p>
+				  <strong>Status:</strong>
+				  {% if doc.status == 'available' %}
+					<span class="text-success">{{ doc.status }}</span>
+				  {% else %}
+					<span>{{ doc.status }}</span>
+				  {% endif %}
+				</p>
+				<a href="{{ doc.route }}" class="btn btn-primary">Book now</a>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	  </div>
+ 
+  </div>
+</div>
+
+<!-- this is a sample default list template -->

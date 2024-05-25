@@ -1,0 +1,30 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-4">
+      <img src="{{ profile }}" class="img-fluid rounded" alt="Profile Picture">
+    </div>
+    <div class="col-md-8">
+      <h2>{{ title }}</h2>
+      <p><strong>Full Name:</strong> {{ first_name }} {{ last_name }}</p>
+      <p><strong>Specialization:</strong> {{ specialization }}</p>
+      <p><strong>City:</strong> {{ city }}</p>
+      {% if frappe.session.user %}
+        <a href="{{ availability_update_url }}" class="btn btn-primary">Update Availability</a>
+      {% else %}
+        <p>
+          <strong>Status:</strong>
+          {% if status == 'available' %}
+            <span class="text-success">{{ status }}</span>
+          {% else %}
+            <span>{{ status }}</span>
+          {% endif %}
+        </p>
+        <a href="https://wellness.hindiyugm.in/patient-registration-form/new" class="btn btn-primary">Register/Login to Book</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
