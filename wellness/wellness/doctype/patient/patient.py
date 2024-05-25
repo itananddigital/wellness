@@ -59,7 +59,7 @@ class Patient(Document):
 		)
 		user.flags.ignore_permissions = True
 		user.enabled = True
-		user.send_welcome_email = True
+		# user.send_welcome_email = True
 		user.add_roles("Patient")
 		self.db_set("user_id", user.name)
 
