@@ -12,7 +12,7 @@
       <p><strong>Specialization:</strong> {{ specialization }}</p>
       <p><strong>City:</strong> {{ city }}</p>
       {% if frappe.session.user != "Guest" %}
-        <a href="booking_slots" class="btn btn-primary">Book now</a>
+        <a href="booking_slots" class="btn btn-primary">Check Availability</a>
       {% else %}
         <a href="https://wellness.hindiyugm.in/patient-registration-form/new" class="btn btn-primary">Register/Login to Book</a>
       {% endif %}
