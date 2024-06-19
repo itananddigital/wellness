@@ -118,5 +118,4 @@ jobs:
           git pull
           bench update --requirements
           bench migrate
-          sudo systemctl restart frappe
-          bench restart
+          sudo supervisorctl restart all
