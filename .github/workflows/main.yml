@@ -116,5 +116,5 @@ jobs:
         script: |
           cd /home/ubuntu/frappe-bench/apps/wellness/
           git pull
-          bench --site ci.hindiyugm.in migrate 
+          bench --site ${{ secrets.SITE_NAME }} migrate 
           bench restart
