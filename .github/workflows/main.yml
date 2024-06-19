@@ -115,7 +115,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /home/ubuntu/frappe-bench/apps/wellness/
-          git pull origin main
+          git pull
           bench update --requirements
           bench migrate
           sudo systemctl restart frappe
