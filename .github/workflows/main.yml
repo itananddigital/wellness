@@ -116,6 +116,5 @@ jobs:
         script: |
           cd /home/ubuntu/frappe-bench/apps/wellness/
           git pull
-          bench update --requirements
           bench --site ci.hindiyugm.in migrate 
           bench restart
