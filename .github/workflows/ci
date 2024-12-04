@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+
+    environment {
+        DEPLOY_HOST = credentials('DEPLOY_HOST') // Store your secrets in Jenkins
+        DEPLOY_USER = credentials('DEPLOY_USER')
+        SSH_PRIVATE_KEY = credentials('SSH_PRIVATE_KEY')
+        SITE_NAME = credentials('SITE_NAME')
+        DOCKER_CONTAINER_NAME = 'frappe-bench' // Your container name
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/your-repo-url.git'
+            }
+        }
+
+        stage('Run Tests in Dockerized Frappe') {
+            steps {
+                script {
+                    sh '''
+                    docker exec ${DOCKER_CONTAINER_NAME} bash -c "
+                        bench --site test_site set-config allow_tests true
+                        bench --site test_site run-tests --app wellness
+                    "
+                    '''
+                }
+            }
+        }
+
+        stage('Migrate and Build') {
+            steps {
+                script {
+                    sh '''
+                    docker exec ${DOCKER_CONTAINER_NAME} bash -c "
+                        bench --site ${SITE_NAME} migrate
+                        bench build
+                    "
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    sshagent(['DEPLOY_CREDENTIALS_ID']) {
+                        sh '''
+                        ssh -i $SSH_PRIVATE_KEY $DEPLOY_USER@$DEPLOY_HOST <<EOF
+                        docker exec ${DOCKER_CONTAINER_NAME} bash -c "
+                            cd /home/frappe/frappe-bench/apps/wellness
+                            git pull
+                            bench --site ${SITE_NAME} migrate
+                            bench restart
+                        "
+                        EOF
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Cleaning up resources if needed"
+        }
+        failure {
+            mail to: 'your-email@example.com',
+                 subject: "Build Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                 body: "Check Jenkins for more details: ${env.BUILD_URL}"
+        }
+    }
+}
