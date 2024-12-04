@@ -2,19 +2,24 @@ pipeline {
     agent any
 
     environment {
-        DEPLOY_HOST = credentials('DEPLOY_HOST') // Store your secrets in Jenkins
+        DEPLOY_HOST = credentials('DEPLOY_HOST')  // Store your secrets in Jenkins
         DEPLOY_USER = credentials('DEPLOY_USER')
         SSH_PRIVATE_KEY = credentials('SSH_PRIVATE_KEY')
         SITE_NAME = credentials('SITE_NAME')
-        DOCKER_CONTAINER_NAME = 'erpv15' // Your container name
+        DOCKER_CONTAINER_NAME = 'erpv15'  // Your container name
     }
 
+    stages {
         stage('Deploy') {
             steps {
                 script {
                     sshagent(['DEPLOY_CREDENTIALS_ID']) {
                         sh '''
-                        ssh -i $SSH_PRIVATE_KEY $DEPLOY_USER@$DEPLOY_HOST <<EOF
+                        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+                        chmod 600 ~/.ssh/id_rsa
+                        ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts
+                        
+                        ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_HOST <<EOF
                         docker exec ${DOCKER_CONTAINER_NAME} bash -c "
                             cd /home/frappe/frappe-env/frappe-bench/apps/wellness
                             git pull
