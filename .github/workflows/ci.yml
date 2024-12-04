@@ -6,41 +6,8 @@ pipeline {
         DEPLOY_USER = credentials('DEPLOY_USER')
         SSH_PRIVATE_KEY = credentials('SSH_PRIVATE_KEY')
         SITE_NAME = credentials('SITE_NAME')
-        DOCKER_CONTAINER_NAME = 'frappe-bench' // Your container name
+        DOCKER_CONTAINER_NAME = 'erpv15' // Your container name
     }
-
-    stages {
-        stage('Clone Repository') {
-            steps {
-                git branch: 'main', url: 'https://github.com/your-repo-url.git'
-            }
-        }
-
-        stage('Run Tests in Dockerized Frappe') {
-            steps {
-                script {
-                    sh '''
-                    docker exec ${DOCKER_CONTAINER_NAME} bash -c "
-                        bench --site test_site set-config allow_tests true
-                        bench --site test_site run-tests --app wellness
-                    "
-                    '''
-                }
-            }
-        }
-
-        stage('Migrate and Build') {
-            steps {
-                script {
-                    sh '''
-                    docker exec ${DOCKER_CONTAINER_NAME} bash -c "
-                        bench --site ${SITE_NAME} migrate
-                        bench build
-                    "
-                    '''
-                }
-            }
-        }
 
         stage('Deploy') {
             steps {
@@ -49,7 +16,7 @@ pipeline {
                         sh '''
                         ssh -i $SSH_PRIVATE_KEY $DEPLOY_USER@$DEPLOY_HOST <<EOF
                         docker exec ${DOCKER_CONTAINER_NAME} bash -c "
-                            cd /home/frappe/frappe-bench/apps/wellness
+                            cd /home/frappe/frappe-env/frappe-bench/apps/wellness
                             git pull
                             bench --site ${SITE_NAME} migrate
                             bench restart
