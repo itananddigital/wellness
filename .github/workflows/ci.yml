@@ -20,7 +20,7 @@ pipeline {
                         ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts
                         
                         ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_HOST <<EOF
-                        docker exec ${DOCKER_CONTAINER_NAME} bash -c "
+                        sudo su - frappe -c "
                             cd /home/frappe/frappe-env/frappe-bench/apps/wellness
                             git pull
                             bench --site ${SITE_NAME} migrate
