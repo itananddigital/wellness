@@ -118,3 +118,4 @@ jobs:
           git pull
           bench --site ${{ secrets.SITE_NAME }} migrate 
           bench restart
+
